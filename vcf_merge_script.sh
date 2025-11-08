@@ -1,0 +1,33 @@
+# Load the module 
+module load BCFtools/1.21-GCC-13.3.0
+
+
+# vcf is block gzip (bgzipped) before merging
+# VCF file is a large file, and it is easier to merge these files if they are zipped 
+
+#for file in results/vcf/*.vcf
+#do
+#bgzip -c ${file} > ${file}.gz
+#done
+
+
+# Index each compressed file
+#for file in results/vcf/*.vcf.gz
+#do
+#bcftools index ${file}
+#done
+
+
+# Merge all individuals into one file
+#bcftools merge -Oz -o results/vcf/GBS_merged_vcf.gz results/vcf/*.vcf.gz
+
+
+#Decompress to plain vcf file
+#gunzip -c results/vcf/GBS_merged_vcf.gz > results/vcf/GBS_merged.vcf
+
+
+#Filter the merged vcf based on the quality scores and the depth
+#Generally the quality of reads are set to 30 for filtering and for the depth of call, greater than 10 is used,, but this depends on the sequencing depth for your sequecing
+
+bcftools filter -i 'QUAL>30 && DP>10' -Ov -o results/vcf/Filtered_GBS_merged.vcf results/vcf/GBS_merged.vcf
+
